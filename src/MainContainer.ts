@@ -2,8 +2,8 @@ import Container = PIXI.Container;
 import { Graphics } from "pixi.js";
 
 export default class Main_Container extends Container {
-	public static readonly WIDTH:number = 3000;
-	public static readonly HEIGHT:number = 1500;
+	public static readonly WIDTH:number = 1300;
+	public static readonly HEIGHT:number = 600;
 
 	constructor() {
 		super();
