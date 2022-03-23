@@ -1,4 +1,4 @@
-import { Graphics, InteractionEvent, IPoint, Sprite } from "pixi.js";
+import { InteractionEvent, IPoint, Sprite } from "pixi.js";
 import Container = PIXI.Container;
 
 export default class LogoWindow extends Container {
@@ -8,6 +8,7 @@ export default class LogoWindow extends Container {
 	private _logoArray:PIXI.Graphics[] = [];
 	private _windowWidth:number = 800;
 	private _windowHeight:number = 500 / this._logoSizeCorrector;
+	private _imageHeight:number = 440;
 	private _touchDownPoint:IPoint;
 	private _startDrag:number=0;
 	private _dragDistance:number = 0;
@@ -20,22 +21,21 @@ export default class LogoWindow extends Container {
 	constructor(logoNameArray:string[], pictureNameArray:string[]) {
 		super();
 		this._logoNameArray = pictureNameArray;
-		this.initBorders();
+		this.initImageWindow();
 		this.initLogo(logoNameArray);
-		
 	}
 
-	private initBorders():void {
-		let borders:PIXI.Graphics = new PIXI.Graphics;
-		borders
-			.lineStyle(1, 0x000000, 1, 1)
-			.beginFill(0x000000, 0)
-			.drawRect(0, 0, this._windowWidth, this._windowHeight);
-		this.addChild(borders);
+	initImageWindow():void {
+		let background:PIXI.Graphics = new PIXI.Graphics;
+		background
+			.beginFill(0x000000)
+			.drawRect(0, 0, this._windowWidth, this._imageHeight)
+		this.addChild(background);
 	}
 
 	private initLogo(logoNameArray:string[]):void {
 		const gap:number = 5;
+		let logoWindowY:number = this._imageHeight + gap;
 		let logoBackgroundX:number = 0;
 		this._logoContainer = new PIXI.Container;
 		this._logoContainer.interactive = true;
@@ -59,9 +59,12 @@ export default class LogoWindow extends Container {
 			logo.y = logoBackground.y + (logoBackground.height - logo.height) /2;
 			this._logoContainer.addChild(logo);
 		}
-		this.initBackground(this._logoContainer);
-		this.initMask(this._logoContainer);
 
+		this.initBorders(logoWindowY);
+		this.initBackgroundLogo(this._logoContainer);
+		this.initMask(this._logoContainer, logoWindowY);
+
+		this._logoContainer.y = logoWindowY;
 		this._logoContainer
 			.addListener('mousedown', this.onDragStart, this)
 			.addListener('touchstart', this.onDragStart, this)
@@ -71,7 +74,16 @@ export default class LogoWindow extends Container {
 			.addListener('touchendoutside', this.onDragEnd, this);
 	}
 
-	private initBackground(logoContainer:PIXI.Container):void {
+	private initBorders(bordersY:number):void {
+		let borders:PIXI.Graphics = new PIXI.Graphics;
+		borders
+			.lineStyle(1, 0x000000, 1, 1)
+			.beginFill(0x000000, 0)
+			.drawRect(0, bordersY, this._windowWidth, this._windowHeight);
+		this.addChild(borders);
+	}
+
+	private initBackgroundLogo(logoContainer:PIXI.Container):void {
 		let logoContainerBackground:PIXI.Graphics = new PIXI.Graphics;
 		logoContainerBackground
 			.lineStyle(1, 0x000000)
@@ -80,12 +92,12 @@ export default class LogoWindow extends Container {
 		logoContainer.addChildAt(logoContainerBackground, 0);
 	}
 
-	private initMask(logoContainer:PIXI.Container):void {
+	private initMask(logoContainer:PIXI.Container, maskY:number):void {
 		let windowMask:PIXI.Graphics = new PIXI.Graphics;
 		windowMask
 			.lineStyle(1, 0x000000, 0, 0)
 			.beginFill(0x000000, 1)
-			.drawRect(0, 0, this._windowWidth, this._windowHeight);
+			.drawRect(0, maskY, this._windowWidth, this._windowHeight);
 		this.addChild(windowMask);
 		logoContainer.mask = windowMask;
 	}
@@ -140,6 +152,7 @@ export default class LogoWindow extends Container {
 	}
 
 	private initImage(text:string):void {
+		let gap:number = 10;
 		if (this._pictureContainer) {
 			this.removeChild(this._pictureContainer);
 		}
@@ -147,11 +160,9 @@ export default class LogoWindow extends Container {
 		this.addChild(this._pictureContainer);
 		let carPicture:Sprite = Sprite.from(text);
 		let standartHeight:number = carPicture.height;
-		carPicture.height = 440
+		carPicture.height = this._imageHeight;
 		carPicture.width /= standartHeight / carPicture.height;
 		carPicture.x = (this._windowWidth - carPicture.width) / 2;
-		carPicture.y -= 450;
-
 		this._pictureContainer.addChild(carPicture);
 	}
 }
