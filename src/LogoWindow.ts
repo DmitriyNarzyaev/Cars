@@ -1,10 +1,18 @@
-import { Sprite } from "pixi.js";
+import { InteractionEvent, IPoint, Sprite } from "pixi.js";
 import Container = PIXI.Container;
 
 export default class LogoWindow extends Container {
 	private _logoSizeCorrector:number = 4;
+	private _logoContainer:PIXI.Container;
 	private _windowWidth:number = 800;
 	private _windowHeight:number = 500 / this._logoSizeCorrector;
+	private _touchDownPoint:IPoint;
+	private _startDrag:number=0;
+	private _dragDistance:number = 0;
+	private _dragIterator:number = 0;
+	private _dragPoint1:number=0;
+	private _dragPoint2:number=0;
+
 	constructor(logoNameArray:string[]) {
 		super();
 		this.initBorders();
@@ -23,8 +31,10 @@ export default class LogoWindow extends Container {
 	private initLogo(logoNameArray:string[]):void {
 		const gap:number = 5;
 		let logoBackgroundX:number = 0;
-		let logoContainer:PIXI.Container = new PIXI.Container;
-		this.addChild(logoContainer);
+		this._logoContainer = new PIXI.Container;
+		this._logoContainer.interactive = true;
+		this._logoContainer.buttonMode = true;
+		this.addChild(this._logoContainer);
 
 		for (let iterator:number = 0; iterator < logoNameArray.length; iterator++) {
 			let logoBackground:PIXI.Graphics = new PIXI.Graphics;
@@ -33,17 +43,25 @@ export default class LogoWindow extends Container {
 				.drawRect(0, 0, this._windowHeight, this._windowHeight);
 			logoBackground.x = logoBackgroundX;
 			logoBackgroundX += logoBackground.width + gap;
-			logoContainer.addChild(logoBackground);
+			this._logoContainer.addChild(logoBackground);
 
 			let logo:Sprite = Sprite.from(logoNameArray[iterator]);
 			logo.width /= this._logoSizeCorrector;
 			logo.height /= this._logoSizeCorrector;
 			logo.x = logoBackground.x + (logoBackground.width - logo.width) /2;
 			logo.y = logoBackground.y + (logoBackground.height - logo.height) /2;
-			logoContainer.addChild(logo);
+			this._logoContainer.addChild(logo);
 		}
-		this.initBackground(logoContainer);
-		this.initMask(logoContainer);
+		this.initBackground(this._logoContainer);
+		this.initMask(this._logoContainer);
+
+		this._logoContainer
+			.addListener('mousedown', this.onDragStart, this)
+			.addListener('touchstart', this.onDragStart, this)
+			.addListener('mouseup', this.onDragEnd, this)
+			.addListener('mouseupoutside', this.onDragEnd, this)
+			.addListener('touchend', this.onDragEnd, this)
+			.addListener('touchendoutside', this.onDragEnd, this);
 	}
 
 	private initBackground(logoContainer:PIXI.Container):void {
@@ -63,5 +81,42 @@ export default class LogoWindow extends Container {
 			.drawRect(0, 0, this._windowWidth, this._windowHeight);
 		this.addChild(windowMask);
 		logoContainer.mask = windowMask;
+	}
+
+	private onDragStart(event:InteractionEvent):void {
+		this._touchDownPoint = this._logoContainer.toLocal(event.data.global);
+		this._logoContainer.addListener('mousemove', this.onDragMove, this);
+		this._logoContainer.addListener('touchmove', this.onDragMove, this);
+		this._startDrag = event.data.global.x;
+	}
+
+	private onDragMove(event:InteractionEvent):void {
+		const newPosition:IPoint = this.toLocal(event.data.global);
+		this._logoContainer.x = newPosition.x - this._touchDownPoint.x;
+		const maxX:number = 0;
+		if (this._logoContainer.x > maxX) {
+			this._logoContainer.x = maxX;
+		}
+		const minX:number =
+			this._windowWidth -
+			this._logoContainer.width;
+		if (this._logoContainer.x < minX) {
+			this._logoContainer.x = minX;
+		}
+	}
+
+	private onDragEnd(event:InteractionEvent):void {
+		this._logoContainer.removeListener('mousemove', this.onDragMove, this);
+		this._logoContainer.removeListener('touchmove', this.onDragMove, this);
+		this._dragDistance = Math.abs(this._startDrag - event.data.global.x);
+		this._dragIterator++;
+		if (this._dragPoint1 !==0 && this._dragPoint2 !==0) {
+			if (this._dragIterator == 1) {
+				this._dragPoint1 = event.data.global.x;
+			} else if (this._dragIterator == 2) {
+				this._dragPoint2 = event.data.global.x;
+			}
+		}
+		this._touchDownPoint = null;
 	}
 }
