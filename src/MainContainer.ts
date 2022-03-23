@@ -9,13 +9,13 @@ export default class MainContainer extends Container {
 		"AlfaRomeo",	"AstonMartin",
 		"Dodge",		"Ferrari",
 		"Jaguar",		"Lotus",
-		"Porsche",
+		"Porsche",		"Infiniti"
 	];
 	private _logoNameArray:string[] = [
 		"AlfaRomeoLogo",	"AstonMartinLogo",
 		"DodgeLogo",		"FerrariLogo",
 		"JaguarLogo",		"LotusLogo",
-		"PorscheLogo"
+		"PorscheLogo",		"InfinitiLogo"
 	];
 	private _logoWindow:LogoWindow;
 
@@ -41,6 +41,7 @@ export default class MainContainer extends Container {
 		loader.add(this._pictureNameArray[4], "Jaguar.jpg");
 		loader.add(this._pictureNameArray[5], "Lotus.jpg");
 		loader.add(this._pictureNameArray[6], "Porsche.jpg");
+		loader.add(this._pictureNameArray[7], "Infiniti.jpg");
 
 		loader.add(this._logoNameArray[0], "AlfaRomeoLogo.png");
 		loader.add(this._logoNameArray[1], "AstonMartinLogo.png");
@@ -49,6 +50,7 @@ export default class MainContainer extends Container {
 		loader.add(this._logoNameArray[4], "JaguarLogo.png");
 		loader.add(this._logoNameArray[5], "LotusLogo.png");
 		loader.add(this._logoNameArray[6], "PorscheLogo.png");
+		loader.add(this._logoNameArray[7], "InfinitiLogo.png");
 
 		loader.load((loader, resources)=> {
 			this.initLogoWindow();
@@ -58,7 +60,7 @@ export default class MainContainer extends Container {
 
 	private initLogoWindow():void {
 		const gap:number = 10;
-		this._logoWindow = new LogoWindow(this._logoNameArray);
+		this._logoWindow = new LogoWindow(this._logoNameArray, this._pictureNameArray);
 		this.addChild(this._logoWindow);
 		this._logoWindow.x = (MainContainer.WIDTH - this._logoWindow.width) / 2;
 		this._logoWindow.y = MainContainer.HEIGHT - this._logoWindow.height - gap; 

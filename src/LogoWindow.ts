@@ -1,9 +1,11 @@
-import { InteractionEvent, IPoint, Sprite } from "pixi.js";
+import { Graphics, InteractionEvent, IPoint, Sprite } from "pixi.js";
 import Container = PIXI.Container;
 
 export default class LogoWindow extends Container {
 	private _logoSizeCorrector:number = 4;
 	private _logoContainer:PIXI.Container;
+	private _pictureContainer:PIXI.Container;
+	private _logoArray:PIXI.Graphics[] = [];
 	private _windowWidth:number = 800;
 	private _windowHeight:number = 500 / this._logoSizeCorrector;
 	private _touchDownPoint:IPoint;
@@ -12,11 +14,15 @@ export default class LogoWindow extends Container {
 	private _dragIterator:number = 0;
 	private _dragPoint1:number=0;
 	private _dragPoint2:number=0;
+	private _logoNameIterator:number = 0;
+	private _logoNameArray:string[];
 
-	constructor(logoNameArray:string[]) {
+	constructor(logoNameArray:string[], pictureNameArray:string[]) {
 		super();
+		this._logoNameArray = pictureNameArray;
 		this.initBorders();
 		this.initLogo(logoNameArray);
+		
 	}
 
 	private initBorders():void {
@@ -44,6 +50,7 @@ export default class LogoWindow extends Container {
 			logoBackground.x = logoBackgroundX;
 			logoBackgroundX += logoBackground.width + gap;
 			this._logoContainer.addChild(logoBackground);
+			this._logoArray.push(logoBackground);
 
 			let logo:Sprite = Sprite.from(logoNameArray[iterator]);
 			logo.width /= this._logoSizeCorrector;
@@ -117,6 +124,34 @@ export default class LogoWindow extends Container {
 				this._dragPoint2 = event.data.global.x;
 			}
 		}
+
+		if (this._dragDistance <= 8) {
+			for (let iterator:number = 0; iterator < this._logoArray.length; iterator++) {
+				this._logoNameIterator++;
+				if (this._touchDownPoint.x >= this._logoArray[iterator].x
+					&& this._touchDownPoint.x <= this._logoArray[iterator].x + this._logoArray[iterator].width) {
+					this.initImage(this._logoNameArray[this._logoNameIterator - 1]);
+					break;
+				}
+			}
+			this._logoNameIterator = 0;
+		}
 		this._touchDownPoint = null;
+	}
+
+	private initImage(text:string):void {
+		if (this._pictureContainer) {
+			this.removeChild(this._pictureContainer);
+		}
+		this._pictureContainer = new PIXI.Container;
+		this.addChild(this._pictureContainer);
+		let carPicture:Sprite = Sprite.from(text);
+		let standartHeight:number = carPicture.height;
+		carPicture.height = 440
+		carPicture.width /= standartHeight / carPicture.height;
+		carPicture.x = (this._windowWidth - carPicture.width) / 2;
+		carPicture.y -= 450;
+
+		this._pictureContainer.addChild(carPicture);
 	}
 }
