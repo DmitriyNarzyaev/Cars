@@ -8,14 +8,14 @@ export default class MainContainer extends Container {
 	private _pictureNameArray:string[] = [
 		"AlfaRomeo",	"AstonMartin",
 		"Dodge",		"Ferrari",
-		"Jaguar",		"Lotus",
-		"Porsche",		"Infiniti"
+		"Jaguar",		"Infiniti",
+		"Lotus",		"Porsche",
 	];
 	private _logoNameArray:string[] = [
 		"AlfaRomeoLogo",	"AstonMartinLogo",
 		"DodgeLogo",		"FerrariLogo",
-		"JaguarLogo",		"LotusLogo",
-		"PorscheLogo",		"InfinitiLogo"
+		"JaguarLogo",		"InfinitiLogo",
+		"LotusLogo",		"PorscheLogo",
 	];
 	private _logoWindow:LogoWindow;
 
@@ -26,10 +26,10 @@ export default class MainContainer extends Container {
 	}
 
 	private initBackground():void {
-		let plkdjfg: Graphics = new Graphics;
-		plkdjfg.beginFill(0x00ff48);
-		plkdjfg.drawRect(0, 0, MainContainer.WIDTH, MainContainer.HEIGHT);
-		this.addChild(plkdjfg);
+		let bg: Graphics = new Graphics;
+		bg.beginFill(0x666666);
+		bg.drawRect(0, 0, MainContainer.WIDTH, MainContainer.HEIGHT);
+		this.addChild(bg);
 	}
 
 	private initImages():void {
@@ -39,18 +39,19 @@ export default class MainContainer extends Container {
 		loader.add(this._pictureNameArray[2], "Dodge.jpg");
 		loader.add(this._pictureNameArray[3], "Ferrari.jpg");
 		loader.add(this._pictureNameArray[4], "Jaguar.jpg");
-		loader.add(this._pictureNameArray[5], "Lotus.jpg");
-		loader.add(this._pictureNameArray[6], "Porsche.jpg");
-		loader.add(this._pictureNameArray[7], "Infiniti.jpg");
+		loader.add(this._pictureNameArray[5], "Infiniti.jpg");
+		loader.add(this._pictureNameArray[6], "Lotus.jpg");
+		loader.add(this._pictureNameArray[7], "Porsche.jpg");
+		
 
 		loader.add(this._logoNameArray[0], "AlfaRomeoLogo.png");
 		loader.add(this._logoNameArray[1], "AstonMartinLogo.png");
 		loader.add(this._logoNameArray[2], "DodgeLogo.png");
 		loader.add(this._logoNameArray[3], "FerrariLogo.png");
 		loader.add(this._logoNameArray[4], "JaguarLogo.png");
-		loader.add(this._logoNameArray[5], "LotusLogo.png");
-		loader.add(this._logoNameArray[6], "PorscheLogo.png");
-		loader.add(this._logoNameArray[7], "InfinitiLogo.png");
+		loader.add(this._logoNameArray[5], "InfinitiLogo.png");
+		loader.add(this._logoNameArray[6], "LotusLogo.png");
+		loader.add(this._logoNameArray[7], "PorscheLogo.png");
 
 		loader.load((loader, resources)=> {
 			this.initLogoWindow();
