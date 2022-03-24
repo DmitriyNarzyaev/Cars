@@ -42,7 +42,6 @@ export default class MainContainer extends Container {
 		loader.add(this._pictureNameArray[5], "Infiniti.jpg");
 		loader.add(this._pictureNameArray[6], "Lotus.jpg");
 		loader.add(this._pictureNameArray[7], "Porsche.jpg");
-		
 
 		loader.add(this._logoNameArray[0], "AlfaRomeoLogo.png");
 		loader.add(this._logoNameArray[1], "AstonMartinLogo.png");

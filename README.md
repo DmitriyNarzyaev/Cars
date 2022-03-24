@@ -1,10 +1,7 @@
-# PixiJS + Webpack starter
-Easy deployment project with:
+# Сar brands
 
-* PixiJS
-* Webpack
-* TypeScript
-* Babel
+You can start this game by clicking on the link
+https://dmitriynarzyaev.github.io/Cars/
 
 ## Deployment
 * Download and install Node.js and npm (https://www.npmjs.com/get-npm)
